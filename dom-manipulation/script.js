@@ -62,6 +62,12 @@ function loadQuotes() {
   }
 }
 
+function filterQuotes() {
+  const selectedCategory = categoryFilter.value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+  showRandomQuote();
+}
+
 // Export quotes to JSON file
 function exportQuotes() {
   const dataStr = JSON.stringify(quotes, null, 2);
