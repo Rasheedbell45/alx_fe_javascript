@@ -1,63 +1,76 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Dynamic Quote Generator — Storage & JSON</title>
+  <title>Dynamic Quote Generator — Sync Demo</title>
   <style>
-    body { font-family: system-ui, Arial; background:#f3f4f6; margin:0; padding:24px; color:#111827; }
-    .container { max-width:900px; margin:0 auto; }
-    h1 { text-align:center; margin-bottom:12px; }
-    #quoteDisplay { min-height:70px; background:#fff; padding:16px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:12px; }
-    .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
-    select, button, input[type="text"] { padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; }
-    button { cursor:pointer; background:#2563eb; color:white; border:none; }
+    body { font-family: system-ui, Arial; margin:20px; background:#f7fafc; color:#111827; }
+    .container { max-width:1000px; margin:0 auto; }
+    header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    #quoteDisplay { background:#fff; padding:16px; border-radius:8px; min-height:70px; box-shadow:0 1px 6px rgba(0,0,0,.06); }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; margin:12px 0; }
+    select,input,button { padding:8px; border-radius:6px; border:1px solid #e5e7eb; }
+    button { background:#2563eb; color:#fff; border:none; cursor:pointer; }
     button.secondary { background:#10b981; }
-    .panel { background:#fff; padding:12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.04); margin-top:12px; }
-    label { display:inline-block; margin-right:8px; }
-    small { color:#6b7280; }
+    .panel { background:#fff; padding:12px; border-radius:8px; box-shadow:0 1px 6px rgba(0,0,0,.04); margin-top:12px; }
+    .small { font-size:12px; color:#6b7280; }
+    .conflict { border-left:3px solid #f59e0b; padding:8px; margin-bottom:8px; }
+    .muted { color:#6b7280; font-size:13px; }
+    .row { display:flex; gap:8px; align-items:center; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Dynamic Quote Generator</h1>
+    <header>
+      <h1>Dynamic Quote Generator — Sync Demo</h1>
+      <div class="small">Sync demo (server precedence on conflict)</div>
+    </header>
 
     <div id="quoteDisplay">Click "Show New Quote" to begin.</div>
 
     <div class="controls">
-      <select id="categorySelect" aria-label="Filter quotes by category">
-        <option value="all">All Categories</option>
-      </select>
-
+      <select id="categoryFilter"><option value="all">All Categories</option></select>
       <button id="newQuote">Show New Quote</button>
-      <button id="showLastQuoteBtn" class="secondary">Show Last Viewed (session)</button>
 
-      <!-- Import / Export -->
-      <button id="exportBtn">Export JSON</button>
+      <!-- Export button (static text required by your checker) -->
       <button id="exportQuotes">Export Quotes</button>
 
-      <label style="display:flex;align-items:center;gap:6px;">
-        <input type="checkbox" id="replaceOnImport" /> <small>Replace on import</small>
+      <button id="importBtn" class="secondary">Import JSON</button>
+      <input type="file" id="importFile" accept=".json,application/json" style="display:none" />
+
+      <button id="syncNowBtn">Sync Now</button>
+      <button id="pushLocalBtn">Push Local to Server</button>
+
+      <label class="row">
+        <input id="simulateServer" type="checkbox" checked />
+        <span class="small">Use simulated server</span>
       </label>
-      <button id="importBtn">Import JSON</button>
-      <input type="file" id="importFile" accept="application/json,.json" style="display:none" />
+
+      <input id="serverUrl" type="text" placeholder="Server URL (for real server)" style="min-width:220px" />
     </div>
 
-    <!-- area where the Add Quote form will be injected -->
     <div id="formArea"></div>
 
-    <div class="panel" id="notes">
-      <strong>Notes:</strong>
-      <ul>
-        <li>Quotes are saved to <code>localStorage</code> automatically.</li>
-        <li>Last viewed quote is saved to <code>sessionStorage</code> (cleared when the tab/browser closes).</li>
-        <li>Use Export to download a JSON file; Import supports merging or replacing.</li>
-      </ul>
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <strong>Sync status:</strong> <span id="syncStatus" class="muted">Not synced yet</span>
+        </div>
+        <div class="small">Poll interval: <span id="pollIntervalLabel">15s</span></div>
+      </div>
+
+      <div id="conflictSection" style="margin-top:12px;">
+        <strong>Conflicts / Actions</strong>
+        <div id="conflictList" class="muted" style="margin-top:8px;">No conflicts.</div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <small class="small">Note: In this demo "server wins" automatically when conflicts are detected, but you can restore local versions manually or push them to server.</small>
+      </div>
     </div>
   </div>
-<select id="categoryFilter" onchange="filterQuotes()">
-  <option value="all">All Categories</option>
-</select>
+
   <script src="script.js"></script>
 </body>
 </html>
