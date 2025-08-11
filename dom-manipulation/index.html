@@ -1,68 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Quote Generator</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dynamic Quote Generator — Storage & JSON</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #f5f5f5;
-    }
-    h1 {
-      text-align: center;
-    }
-    #quoteDisplay {
-      font-size: 1.2rem;
-      padding: 15px;
-      background: white;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      min-height: 60px;
-    }
-    .form-section {
-      margin-top: 20px;
-      padding: 10px;
-      background: #fff;
-      border-radius: 8px;
-    }
-    input, select, button {
-      padding: 8px;
-      margin: 5px 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    button {
-      background: #4caf50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #45a049;
-    }
+    body { font-family: system-ui, Arial; background:#f3f4f6; margin:0; padding:24px; color:#111827; }
+    .container { max-width:900px; margin:0 auto; }
+    h1 { text-align:center; margin-bottom:12px; }
+    #quoteDisplay { min-height:70px; background:#fff; padding:16px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.06); margin-bottom:12px; }
+    .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
+    select, button, input[type="text"] { padding:8px 10px; border-radius:6px; border:1px solid #d1d5db; background:#fff; }
+    button { cursor:pointer; background:#2563eb; color:white; border:none; }
+    button.secondary { background:#10b981; }
+    .panel { background:#fff; padding:12px; border-radius:8px; box-shadow:0 1px 4px rgba(0,0,0,.04); margin-top:12px; }
+    label { display:inline-block; margin-right:8px; }
+    small { color:#6b7280; }
   </style>
 </head>
 <body>
-  <h1>Dynamic Quote Generator</h1>
+  <div class="container">
+    <h1>Dynamic Quote Generator</h1>
 
-  <!-- Quote display area -->
-  <div id="quoteDisplay">Click "Show New Quote" to start!</div>
+    <div id="quoteDisplay">Click "Show New Quote" to begin.</div>
 
-  <!-- Category filter -->
-  <select id="categorySelect">
-    <option value="all">All Categories</option>
-  </select>
-  
-  <button id="newQuote">Show New Quote</button>
+    <div class="controls">
+      <select id="categorySelect" aria-label="Filter quotes by category">
+        <option value="all">All Categories</option>
+      </select>
 
-  <!-- Form to add new quotes -->
-  <div class="form-section">
-    <h3>Add a New Quote</h3>
-    <input id="newQuoteText" type="text" placeholder="Enter a new quote" />
-    <input id="newQuoteCategory" type="text" placeholder="Enter quote category" />
-    <button id="addQuoteBtn">Add Quote</button>
+      <button id="newQuote">Show New Quote</button>
+      <button id="showLastQuoteBtn" class="secondary">Show Last Viewed (session)</button>
+
+      <!-- Import / Export -->
+      <button id="exportBtn">Export JSON</button>
+
+      <label style="display:flex;align-items:center;gap:6px;">
+        <input type="checkbox" id="replaceOnImport" /> <small>Replace on import</small>
+      </label>
+      <button id="importBtn">Import JSON</button>
+      <input type="file" id="importFile" accept="application/json,.json" style="display:none" />
+    </div>
+
+    <!-- area where the Add Quote form will be injected -->
+    <div id="formArea"></div>
+
+    <div class="panel" id="notes">
+      <strong>Notes:</strong>
+      <ul>
+        <li>Quotes are saved to <code>localStorage</code> automatically.</li>
+        <li>Last viewed quote is saved to <code>sessionStorage</code> (cleared when the tab/browser closes).</li>
+        <li>Use Export to download a JSON file; Import supports merging or replacing.</li>
+      </ul>
+    </div>
   </div>
 
   <script src="script.js"></script>
