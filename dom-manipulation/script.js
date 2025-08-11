@@ -108,6 +108,12 @@ function showRandomQuote() {
   displayQuote(pool[idx]);
 }
 
+function filterQuotes() {
+  const selectedCategory = categoryFilter.value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+  showRandomQuote();
+}
+
 function showSyncMessage() {
   const msg = document.createElement('div');
   msg.textContent = "Quotes synced with server!";
