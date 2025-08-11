@@ -149,6 +149,7 @@ function showLastViewed() {
 function addQuote() {
   const textInput = document.getElementById('newQuoteText');
   const categoryInput = document.getElementById('newQuoteCategory');
+  const button = document.getElementById("exportQuotes").addEventListener("click", exportQuotes);
 
   if (!textInput || !categoryInput) {
     alert('Form inputs not found.');
