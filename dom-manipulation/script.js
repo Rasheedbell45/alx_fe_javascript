@@ -226,6 +226,49 @@ const fakeServer = (function() {
 })();
 
 // ---------- Server communication (switches between fakeServer and real server) ----------
+// Simulate fetching quotes from server
+async function fetchQuotesFromServer() {
+  try {
+    // Example using JSONPlaceholder (replace with your real endpoint)
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts?_limit=5");
+    const serverData = await response.json();
+
+    // Convert server data into our quote format
+    const serverQuotes = serverData.map(post => ({
+      text: post.title,
+      category: "server"
+    }));
+
+    // Conflict resolution: server data takes precedence
+    const combinedQuotes = mergeQuotesWithServer(serverQuotes, quotes);
+    quotes = combinedQuotes;
+    saveQuotes();
+    populateCategories();
+    console.log("Quotes synced from server.");
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+  }
+}
+
+// Merge local and server quotes, preferring server in case of conflict
+function mergeQuotesWithServer(serverQuotes, localQuotes) {
+  const allQuotes = [...serverQuotes];
+
+  localQuotes.forEach(localQuote => {
+    const existsOnServer = serverQuotes.some(
+      sq => sq.text === localQuote.text && sq.category === localQuote.category
+    );
+    if (!existsOnServer) {
+      allQuotes.push(localQuote);
+    }
+  });
+
+  return allQuotes;
+}
+
+// Periodic sync every 60 seconds
+setInterval(fetchQuotesFromServer, 60000);
+
 async function fetchServerQuotes() {
   if (chkSimulate.checked) {
     return fakeServer.fetchQuotes();
