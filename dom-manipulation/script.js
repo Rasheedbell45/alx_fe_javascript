@@ -48,32 +48,43 @@ function quoteExists(candidate) {
 
 // ---------- Storage: localStorage for persistent quotes ----------
 function saveQuotes() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
-  } catch (err) {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+} catch (err) {
     console.error('Failed to save quotes to localStorage:', err);
     alert('Warning: Could not save quotes to localStorage.');
   }
 }
 
 function loadQuotes() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    quotes = [...DEFAULT_QUOTES];
-    saveQuotes();
-    return;
-  }
-  const parsed = safeParseJSON(raw, null);
-  if (Array.isArray(parsed) && parsed.every(isValidQuoteObject)) {
-    quotes = parsed;
-  } else {
-    // data corruption: reset to default
-    console.warn('localStorage contained invalid quotes, resetting to defaults.');
-    quotes = [...DEFAULT_QUOTES];
-    saveQuotes();
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
   }
 }
 
+// Export quotes to JSON file
+function exportQuotes() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
+}
+
+// Dynamically create export button
+function createExportButton() {
+  const exportBtn = document.createElement("button");
+  exportBtn.textContent = "Export Quotes";
+  exportBtn.addEventListener("click", exportQuotes);
+  document.body.appendChild(exportBtn);
+}
 // ---------- sessionStorage: store last viewed quote (temporary) ----------
 function persistLastViewedQuote(quoteObj) {
   try {
@@ -288,6 +299,7 @@ function init() {
   loadQuotes();
   populateCategories();
   createAddQuoteForm();
+  createExportButton();
 
   // wire basic controls
   btnShowNew.addEventListener('click', showRandomQuote);
