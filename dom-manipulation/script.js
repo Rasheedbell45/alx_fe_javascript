@@ -108,6 +108,27 @@ function showRandomQuote() {
   displayQuote(pool[idx]);
 }
 
+function showSyncMessage() {
+  const msg = document.createElement('div');
+  msg.textContent = "Quotes synced with server!";
+  msg.style.position = 'fixed';
+  msg.style.bottom = '10px';
+  msg.style.right = '10px';
+  msg.style.backgroundColor = '#4caf50';
+  msg.style.color = 'white';
+  msg.style.padding = '8px 12px';
+  msg.style.borderRadius = '4px';
+  document.body.appendChild(msg);
+
+  setTimeout(() => {
+    msg.remove();
+  }, 3000);
+}
+
+// Then inside syncQuotes, after success:
+console.log("Quotes synced with server!");
+showSyncMessage();
+
 // remember filter selection
 categoryFilter.addEventListener('change', () => {
   localStorage.setItem('dqg_selectedFilter_v1', categoryFilter.value);
