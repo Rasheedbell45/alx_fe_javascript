@@ -126,14 +126,20 @@ function displayQuote(quoteObj) {
 
 // ---------- Quote actions ----------
 function showRandomQuote() {
-  const sel = categorySelect.value;
-  const pool = sel === 'all' ? quotes : quotes.filter(q => q.category === sel);
-  if (!pool || pool.length === 0) {
-    quoteDisplay.textContent = 'No quotes available for the selected category.';
+  let filtered = quotes;
+  const selectedCategory = categoryFilter.value;
+
+  if (selectedCategory !== "all") {
+    filtered = quotes.filter(q => q.category === selectedCategory);
+  }
+
+  if (filtered.length === 0) {
+    quoteDisplay.textContent = "No quotes in this category.";
     return;
   }
-  const idx = Math.floor(Math.random() * pool.length);
-  displayQuote(pool[idx]);
+
+  const randomIndex = Math.floor(Math.random() * filtered.length);
+  quoteDisplay.textContent = `"${filtered[randomIndex].text}" — ${filtered[randomIndex].category}`;
 }
 
 function showLastViewed() {
@@ -301,7 +307,7 @@ function init() {
   populateCategories();
   createAddQuoteForm();
   createExportButton();
-
+  showRandomQuote();
   // wire basic controls
   btnShowNew.addEventListener('click', showRandomQuote);
   categorySelect.addEventListener('change', showRandomQuote);
